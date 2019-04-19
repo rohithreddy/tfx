@@ -28,7 +28,7 @@ from tfx.utils import types
 class _BigQueryConverter(object):
   """Help class for bigquery result row to tf example conversion."""
 
-  def __init__(self, query):
+  def __init__(self, query: Text):
     client = bigquery.Client()
     # Dummy query to get the type information for each field.
     query_job = client.query('SELECT * FROM ({}) LIMIT 0'.format(query))
@@ -37,7 +37,7 @@ class _BigQueryConverter(object):
     for field in results.schema:
       self._type_map[field.name] = field.field_type
 
-  def RowToExample(self, instance):
+  def RowToExample(self, instance: Dict[Text, Any]) -> tf.train.Example:
     """Convert bigquery result row to tf example."""
     feature = {}
     for key, value in instance.items():
@@ -65,7 +65,7 @@ class _BigQueryConverter(object):
 @beam.typehints.with_input_types(beam.Pipeline)
 @beam.typehints.with_output_types(beam.typehints.Dict[Text, Any])
 def _ReadFromBigQuery(  # pylint: disable=invalid-name
-    pipeline, query):
+    pipeline: beam.Pipeline, query: Text) -> beam.pvalue.PCollection:
   return (pipeline
           | 'QueryTable' >> beam.io.Read(
               beam.io.BigQuerySource(query=query, use_standard_sql=True)))
@@ -75,36 +75,31 @@ def _ReadFromBigQuery(  # pylint: disable=invalid-name
 @beam.typehints.with_input_types(beam.Pipeline)
 @beam.typehints.with_output_types(tf.train.Example)
 def _BigQueryToExample(  # pylint: disable=invalid-name
-    pipeline,
-    input_dict,  # pylint: disable=unused-argument
-    exec_properties):
+    pipeline: beam.Pipeline,
+    input_dict: Dict[Text, List[types.TfxType]],  # pylint: disable=unused-argument
+    exec_properties: Dict[Text, Any],  # pylint: disable=unused-argument
+    split_pattern: Text) -> beam.pvalue.PCollection:
   """Read from BigQuery and transform to TF examples.
 
   Args:
     pipeline: beam pipeline.
     input_dict: Input dict from input key to a list of Artifacts.
     exec_properties: A dict of execution properties.
-      - query: BigQuery sql string.
+    split_pattern: Split.pattern in Input config, a BigQuery sql string.
 
   Returns:
     PCollection of TF examples.
-
-  Raises:
-    RuntimeError: if query is missing in exec_properties.
   """
-  if 'query' not in exec_properties:
-    raise RuntimeError('Missing query.')
-  query = exec_properties['query']
-  converter = _BigQueryConverter(query)
+  converter = _BigQueryConverter(split_pattern)
 
   return (pipeline
-          | 'QueryTable' >> _ReadFromBigQuery(query)  # pylint: disable=no-value-for-parameter
+          | 'QueryTable' >> _ReadFromBigQuery(split_pattern)  # pylint: disable=no-value-for-parameter
           | 'ToTFExample' >> beam.Map(converter.RowToExample))
 
 
 class Executor(base_example_gen_executor.BaseExampleGenExecutor):
   """Generic TFX BigQueryExampleGen executor."""
 
-  def GetInputSourceToExamplePTransform(self):
+  def GetInputSourceToExamplePTransform(self) -> beam.PTransform:
     """Returns PTransform for BigQuery to TF examples."""
     return _BigQueryToExample

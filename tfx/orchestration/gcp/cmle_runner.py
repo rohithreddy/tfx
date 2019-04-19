@@ -31,10 +31,10 @@ _POLLING_INTERVAL_IN_SECONDS = 30
 
 
 # TODO(ajaygopinathan): Add pydocs once this interface is finalized.
-def start_cmle_training(input_dict,
-                        output_dict,
-                        exec_properties,
-                        training_inputs):
+def start_cmle_training(input_dict: Dict[Text, List[types.TfxType]],
+                        output_dict: Dict[Text, List[types.TfxType]],
+                        exec_properties: Dict[Text, Any],
+                        training_inputs: Dict[Text, Any]):
   """Start a trainer job on CMLE."""
   training_inputs = training_inputs.copy()
   # TODO(khaas): This file goes away when cl/236428692 lands
@@ -98,8 +98,8 @@ def start_cmle_training(input_dict,
   tf.logging.info('Job \'{}\' successful.'.format(job_name))
 
 
-def deploy_model_for_serving(serving_path, model_version,
-                             cmle_serving_args):
+def deploy_model_for_serving(serving_path: Text, model_version: Text,
+                             cmle_serving_args: Dict[Text, Any]):
   """Deploys a model for serving with CMLE.
 
   Args:

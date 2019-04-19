@@ -29,9 +29,9 @@ class BaseExecutor(with_metaclass(abc.ABCMeta, object)):
   """Abstract TFX executor class."""
 
   @abc.abstractmethod
-  def Do(self, input_dict,
-         output_dict,
-         exec_properties):
+  def Do(self, input_dict: Dict[Text, List[types.TfxType]],
+         output_dict: Dict[Text, List[types.TfxType]],
+         exec_properties: Dict[Text, Any]) -> None:
     """Execute underlying component implementation.
 
     Args:
@@ -51,7 +51,7 @@ class BaseExecutor(with_metaclass(abc.ABCMeta, object)):
     """
     pass
 
-  def __init__(self, beam_pipeline_args = None):
+  def __init__(self, beam_pipeline_args: Optional[List[Text]] = None):
     """Constructs a beam based executor.
 
     Args:
@@ -61,13 +61,13 @@ class BaseExecutor(with_metaclass(abc.ABCMeta, object)):
 
   # TODO(b/126182711): Look into how to support fusion of multiple executors
   # into same pipeline.
-  def _get_beam_pipeline_args(self):
+  def _get_beam_pipeline_args(self) -> Optional[List[Text]]:
     """Get beam pipeline args."""
     return self._beam_pipeline_args
 
-  def _log_startup(self, inputs,
-                   outputs,
-                   exec_properties):
+  def _log_startup(self, inputs: Dict[Text, List[types.TfxType]],
+                   outputs: Dict[Text, List[types.TfxType]],
+                   exec_properties: Dict[Text, Any]) -> None:
     """Log inputs, outputs, and executor properties in a standard format."""
     tf.logging.info('Starting {} execution.'.format(self.__class__.__name__))
     tf.logging.info('Inputs for {} is: {}'.format(

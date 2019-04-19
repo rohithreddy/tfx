@@ -7,6 +7,7 @@
     *   Kubeflow
 *   Added TensorFlow Model Analysis Colab example
 *   Supported split ratio for ExampleGen components.
+*   Supported pre-split input for ExampleGen components.
 
 ## Bug fixes and other changes
 

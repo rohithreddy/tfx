@@ -30,7 +30,7 @@ from tfx.utils import import_utils
 from tfx.utils import types
 
 
-def parse_tfx_type(json_str):
+def parse_tfx_type(json_str: Text):
   """Parses a list of artifacts and their types from json."""
   json_artifact_list = json.loads(json_str)
 
@@ -42,7 +42,7 @@ def parse_tfx_type(json_str):
   return tfx_types
 
 
-def to_snake_case(name):
+def to_snake_case(name: Text):
   s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
   return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
@@ -52,11 +52,11 @@ class BaseRunner(utils.with_metaclass(abc.ABCMeta), object):
 
   def __init__(
       self,
-      executor_class_path,
-      name,
-      input_dict,
-      outputs,
-      exec_properties,
+      executor_class_path: Text,
+      name: Text,
+      input_dict: Dict[Text, List[types.TfxType]],
+      outputs: Text,
+      exec_properties: Dict[Text, Any],
   ):
     raw_args = exec_properties.get('beam_pipeline_args', [])
 
@@ -117,7 +117,7 @@ class BaseRunner(utils.with_metaclass(abc.ABCMeta), object):
 class CsvExampleGenRunner(BaseRunner):
   """Runner for CSVExampleGen component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(CsvExampleGenRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='CSVExampleGen',
@@ -140,7 +140,7 @@ class CsvExampleGenRunner(BaseRunner):
 class BigQueryExampleGenRunner(BaseRunner):
   """Runner for BigQueryExampleGen component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(BigQueryExampleGenRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='BigQueryExampleGen',
@@ -154,7 +154,7 @@ class BigQueryExampleGenRunner(BaseRunner):
 class StatisticsGenRunner(BaseRunner):
   """Runner for StatisticsGen component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(StatisticsGenRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='StatisticsGen',
@@ -170,7 +170,7 @@ class StatisticsGenRunner(BaseRunner):
 class SchemaGenRunner(BaseRunner):
   """Runner for SchemaGen component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(SchemaGenRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='SchemaGen',
@@ -186,7 +186,7 @@ class SchemaGenRunner(BaseRunner):
 class ExampleValidatorRunner(BaseRunner):
   """Runner for ExampleValidator component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(ExampleValidatorRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='ExampleValidator',
@@ -203,7 +203,7 @@ class ExampleValidatorRunner(BaseRunner):
 class TransformRunner(BaseRunner):
   """Runner for Transform component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(TransformRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='Transform',
@@ -220,7 +220,7 @@ class TransformRunner(BaseRunner):
 class TrainerRunner(BaseRunner):
   """Runner for Trainer component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(TrainerRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='Trainer',
@@ -242,7 +242,7 @@ class TrainerRunner(BaseRunner):
 class EvaluatorRunner(BaseRunner):
   """Runner for Evaluator component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(EvaluatorRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='Evaluator',
@@ -259,7 +259,7 @@ class EvaluatorRunner(BaseRunner):
 class ModelValidatorRunner(BaseRunner):
   """Runner for ModelValidator component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(ModelValidatorRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='ModelValidator',
@@ -280,7 +280,7 @@ class ModelValidatorRunner(BaseRunner):
 class PusherRunner(BaseRunner):
   """Runner for Pusher component."""
 
-  def __init__(self, args):
+  def __init__(self, args: argparse.Namespace):
     super(PusherRunner, self).__init__(
         executor_class_path=args.executor_class_path,
         name='Pusher',

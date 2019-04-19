@@ -31,9 +31,9 @@ from google.protobuf import json_format
 class Executor(base_executor.BaseExecutor):
   """Generic TFX pusher executor."""
 
-  def Do(self, input_dict,
-         output_dict,
-         exec_properties):
+  def Do(self, input_dict: Dict[Text, List[types.TfxType]],
+         output_dict: Dict[Text, List[types.TfxType]],
+         exec_properties: Dict[Text, Any]) -> None:
     """Push model to target if blessed.
 
     Args:
